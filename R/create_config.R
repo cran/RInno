@@ -1,7 +1,8 @@
 #' Creates an app config file, "config.cfg"
 #'
 #' @inheritParams create_app
-#' @param repo Default repository to install package dependencies from.
+#' @param remotes Character vector of GitHub repository addresses in the format \code{username/repo[/subdir][\@ref|#pull]} for GitHub package dependencies.
+#' @param repo Default repository to install package dependencies from. This defaults to \code{repo = "http://cran.rstudio.com"}.
 #' @param error_log Name of error logging file. Contains start up errors from \emph{run.R}.
 #' @param app_repo_url Repository address in the format \code{"https://bitbucket.org/username/repo"} (\code{repo = app_name}). Only Bitbucket and GitHub repositories are supported.
 #' @param auth_user Authorized username. It is recommended to create a read-only account for each app.  Support for OAuth 2 and tokens is in the works.
@@ -9,12 +10,12 @@
 #'
 #' @author Jonathan M. Hill
 #'
-#' @return A json file, \emph{config.cfg}, in \code{app_dir}.
+#' @return A json file, \emph{config.cfg}, in \code{app_dir}/utils.
 #' @seealso \code{\link{create_app}}.
 #' @export
 
-create_config <- function(app_name, R_version, app_dir,
-  repo = "http://cran.rstudio.com",  error_log = "error.log",
+create_config <- function(app_name, R_version, app_dir, pkgs,
+  remotes = "none", repo = "http://cran.rstudio.com",  error_log = "error.log",
   app_repo_url = "none", auth_user = "none", auth_pw = "none") {
 
   # Reset defaults if empty
@@ -28,8 +29,7 @@ create_config <- function(app_name, R_version, app_dir,
   if (app_repo_url != "none") {
     # Fail early
     if (!any(grepl('bitbucket', app_repo_url), grepl('github', app_repo_url))) {
-      stop(sprintf("%s is not a valid app_repo_url. Make sure there are not any
-                   typos and try again.", app_repo_url))
+      stop(sprintf("%s is not a valid app_repo_url.", app_repo_url))
     }
 
     # Set app_repo
@@ -48,11 +48,12 @@ create_config <- function(app_name, R_version, app_dir,
     list(
       appname = app_name,
       r_bindir = r_home,
-      pkgs = list(cran = repo),
-      logging = list(filename = error_log),
+      pkgs = list(pkgs = pkgs, cran = repo),
+      logging = error_log,
       host = host,
       app_repo = app_repo,
       auth_user = auth_user,
-      auth_pw = auth_pw),
-    file.path(app_dir, "config.cfg"), pretty = T, auto_unbox = T)
+      auth_pw = auth_pw,
+      remotes = remotes),
+    file.path(app_dir, "utils/config.cfg"), pretty = T, auto_unbox = T)
 }

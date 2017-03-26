@@ -1,23 +1,23 @@
 ---
-title: "Deployment"
+title: "Continuous Installation"
 author: "Jonathan M. Hill"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Deployment}
+  %\VignetteIndexEntry{Continuous Installation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-RInno supports continuous local deployment of shiny apps through APIs to public/private BitBucket and GitHub repos. On start up, RInno apps call your repository. If there have been any hotfixes or releases since installation, the app automatically updates, letting its user know through a windows progress bar, and then opens normally. 
+RInno supports continuous installation of shiny apps through APIs to public/private BitBucket and GitHub repos. On start up, RInno apps call your repository. If there have been any hotfixes or releases since installation, the app automatically updates, letting its user know through a windows progress bar, and then opens normally. 
 
 This feature requires:
 
-1. A URL to the app's repo, `app_repo_url` (for private repos, provide `auth_user` and `pw`).
+1. A URL to the app's repo, `app_repo_url` (for private repos, provide `auth_user` and `auth_pw`).
 2. A release tag on GitHub, or a version on BitBucket.
 3. An R package structure that can be installed via `devtools::install_github` or `devtools::install_bitbucket`.
 
-The release tag or version is compared with the package DESCRIPTION file, i.e. `0.0.0.9000`, to determine if the app should call `devtools::install_github` or `devtools::install_bitbucket` respectively. So update the app's version in both places with each new version, otherwise the app will re-install every time its icon is clicked.
+The release tag or version is compared with the package DESCRIPTION file, i.e. `0.0.0.9000`, to determine if the app should call `devtools::install_github` or `devtools::install_bitbucket` respectively. So update the app's version in both places (2 & 3 above) with each new version, otherwise the app will re-install every time its icon is clicked.
 
 
 ## R Package Structure
@@ -48,7 +48,7 @@ create_app(
   app_name     = 'myapp', 
   app_repo_url = 'https://bitbucket.org/fi_consulting/myapp',
   auth_user    = '<read_only_username>',
-  pw           = '<password>')
+  auth_pw      = '<password>')
 
 compile_iss()
 ```
@@ -59,10 +59,10 @@ Or for custom installers, directly through `create_config`:
 create_config(
   app_name     = 'myapp', 
   R_version    = '3.3.2', 
-  app_dir       = 'app', 
+  app_dir      = 'app', 
   app_repo_url = 'https://bitbucket.org/fi_consulting/myapp',
   auth_user    = '<read_only_username>', 
-  pw           = '<password>')
+  auth_pw      = '<password>')
 
 # -------------------------------------------------- Many steps later
 compile_iss()
@@ -82,7 +82,7 @@ create_app(
   app_name     = 'myapp', 
   app_repo_url = 'https://github.com/fi_consulting/myapp',
   auth_user    = '<read_only_username>',
-  pw           = '<password>')
+  auth_pw      = '<password>')
 
 compile_iss()
 ```
@@ -93,10 +93,10 @@ Or for custom installers, directly through `create_config`:
 create_config(
   app_name     = 'myapp', 
   R_version    = '3.3.2', 
-  app_dir       = 'app', 
+  app_dir      = 'app', 
   app_repo_url = 'https://github.com/fi_consulting/myapp',
   auth_user    = '<read_only_username>', 
-  pw           = '<password>')
+  auth_pw      = '<password>')
 
 # -------------------------------------------------- Many steps later
 compile_iss()
@@ -117,7 +117,7 @@ numeric_version('0.1.0') == numeric_version('0.1')
 numeric_version('0.0.1') > numeric_version('0.0.0.9000')
 ```
 
-This is important because RInno determines the `local_version` of the app via `installed.packages()`. If R cannot parse the version correctly, the continuous deployment will be... nonstop. Users will love you.
+This is important because RInno determines the `local_version` of the app via `installed.packages()`. If R cannot parse the version correctly, the continuous installation will be... nonstop. Users will love you.
 
 
 

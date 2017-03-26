@@ -1,7 +1,7 @@
 #' File Section of ISS
 #'
 #' Files to be installed on user's computer. Everything in \code{app_dir} plus
-#' \code{file_list}. For more information, visit \href{http://www.jrsoftware.org/ishelp/topic_filessection.htm}{[Files] section} or call \code{inno_doc()}.
+#' \code{file_list}. For more information, visit \href{http://www.jrsoftware.org/ishelp/index.php?topic=filessection}{[Files] section}.
 #'
 #' @inheritParams create_app
 #' @param file_list Character vector. Extra files to be installed with the app.
@@ -12,13 +12,13 @@
 
 files <- function(iss, app_dir, file_list = character()) {
 
+  all_files <- list.files(app_dir, recursive = T)
+
   # If a file list is not provided than list only files in app_dir
   if (length(file_list) == 0) {
-    all_files <- list.files(app_dir, recursive = T)[
-      !grepl("iss$|readme.txt", list.files(app_dir, recursive = T))]
+    all_files <- all_files[!grepl("iss$|info.*txt$|ico$", all_files)]
   } else {
-    all_files <- c(file_list, list.files(app_dir, recursive = T)[
-      !grepl("iss$|readme.txt", list.files(app_dir, recursive = T))])
+    all_files <- c(file_list, all_files[!grepl("iss$|info.*txt$|ico$", all_files)])
   }
 
   file_dirs     <- gsub("\\.", "", dirname(all_files))

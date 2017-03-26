@@ -32,72 +32,23 @@ message("working path:\n", paste("...", appwd))
 library("jsonlite", character.only = TRUE)
 library("devtools", character.only = TRUE)
 library("httr", character.only = TRUE)
-config <- jsonlite::fromJSON(file.path(appwd, "config.cfg"))
+config <- jsonlite::fromJSON(file.path(appwd, "utils/config.cfg"))
+
+# Package dependency list
+pkgs <- config$pkgs$pkgs; remotes <- config$remotes
 
 # Provide some initialization status updates
 pb <- winProgressBar(
   title = sprintf("Starting %s ...", config$appname),
   label = "Initializing ...")
 
-# Package dependency list
-pkgs <- read.table(file.path(appwd, "packages.txt"), stringsAsFactors = F)$V1
-
+# If an app repository has been provided, install the app from there
 if (config$app_repo[[1]] != "none") {
-  # Get remote version of app
-  source("get_remote_version.R")
-  api_response <- get_remote_version(
-    app_repo  = config$app_repo[[1]],
-    host      = config$host[[1]],
-    auth_user = config$auth_user[[1]],
-    auth_pw   = config$auth_pw[[1]])
-
-  # If information about an app repo has been supplied,
-  if (api_response != "none") {
-    local_version <- try(packageVersion(config$appname[[1]]))
-
-    # A try-error indicates that the package has not been installed
-    if (class(local_version) == "try-error") {
-      setWinProgressBar(pb, value = 1 / length(pkgs),
-        label = sprintf("Installing %s", config$appname[[1]]))
-
-      if (config$host == "bitbucket") {
-        devtools::install_bitbucket(config$app_repo,
-          auth_user = config$auth_user, password = config$auth_pw)
-      } else if (config$host == "github") {
-        devtools::install_github(config$app_repo,
-          auth_user = config$auth_user, password = config$auth_pw)
-      }
-    } else
-    # Check the version and whether it has been installed, and install it.
-    if (local_version != api_response) {
-      setWinProgressBar(pb, value = 1 / length(pkgs),
-        label = sprintf("Updating %s to version %s",
-                  config$appname[[1]], api_response))
-
-      if (config$host == "bitbucket") {
-        devtools::install_bitbucket(config$app_repo,
-          auth_user = config$auth_user, password = config$auth_pw)
-      } else if (config$host == "github") {
-        devtools::install_github(config$app_repo,
-          auth_user = config$auth_user, password = config$auth_pw)
-      }
-    }
-  }
+  source("utils/get_app_from_app_url.R")
 }
 
-# Ensure that a package is installed
-ensure <- function(pkg, repo = config$pkgs$cran, load = TRUE) {
-  setWinProgressBar(pb,
-    value = grep(paste0("\\b", pkg, "\\b"), pkgs) / (length(pkgs) + 1),
-    label = sprintf("Loading - %s...", pkg))
-
-  if (!(pkg %in% row.names(installed.packages()))) {
-    install.packages(pkg, repo = repo, lib = applibpath)
-  }
-  if (load) {
-    library(pkg, character.only = TRUE)
-  }
-}
+# Load functions to ensure software dependencies
+source("utils/ensure.R")
 
 # Use tryCatch to display error messages in config$logging$filename
 appexit_msg <- tryCatch({
@@ -106,6 +57,10 @@ appexit_msg <- tryCatch({
   message("ensuring packages: ", paste(pkgs, collapse = ", "))
   setWinProgressBar(pb, 0, label = "Ensuring package dependencies ...")
   ._ <- lapply(pkgs, ensure, repo = config$pkgs$cran)
+  if (remotes[1] != "none") {
+    setWinProgressBar(pb, 0, label = "Ensuring GitHub package dependencies ...")
+    ._ <- lapply(remotes, ensure_remotes)
+  }
 
   for (i in seq_along(pkgs)) {
     setWinProgressBar(pb,
@@ -120,7 +75,7 @@ appexit_msg <- tryCatch({
 
   # App is launched in the system default browser (if FF or Chrome, should work
   # fine, IE needs to be >= 10)
-  source(file.path(appwd, "app.R"))
+  source(file.path(appwd, "utils/app.R"))
 
   "application terminated normally"
 },
