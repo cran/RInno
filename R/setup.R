@@ -3,7 +3,7 @@
 #' This section contains global settings used by the installer and uninstaller. See \href{http://www.jrsoftware.org/ishelp/index.php?topic=setupsection}{[Setup]} for details.
 #'
 #' @inheritParams create_app
-#' @param iss Character vector which cummulatively becomes an Inno Setup Script (ISS).
+#' @param iss Character vector which cumulatively becomes an Inno Setup Script (ISS).
 #'
 #' @param app_version Version number of the app being installed, defaults to \code{'0.0.0'}. It is displayed in the Version field of the app's \emph{Add/Remove Programs} entry. See \href{http://www.jrsoftware.org/ishelp/index.php?topic=setup_appversion}{[Setup]:AppVersion} for details.
 #'
@@ -41,7 +41,7 @@
 #'   setup(dir_out = 'installer', default_dir = 'pf')
 #' }
 #'
-#' @seealso \code{\link{get_R}}, \code{\link{copy_installation}}, \code{\link{create_config}}, \code{\link{create_bat}}, \code{\link{create_pkgs}}, \code{\link{directives}}, \code{\link{setup}}, \code{\link{languages}}, \code{\link{tasks}}, \code{\link{files}}, \code{\link{icons}}, \code{\link{run}}, and \code{\link{code}}.
+#' @seealso \code{\link{get_R}}, \code{\link{copy_installation}}, \code{\link{create_config}}, \code{\link{create_bat}}, \code{\link{directives}}, \code{\link{setup}}, \code{\link{languages}}, \code{\link{tasks}}, \code{\link{files}}, \code{\link{icons}}, \code{\link{run}}, and \code{\link{code}}.
 #' @author Jonathan M. Hill
 #' @export
 

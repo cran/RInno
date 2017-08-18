@@ -78,11 +78,11 @@ If you would like to create a custom installer from within R, you can slowly bui
 
 `create_app` passes its arguments to most of the other support functions in RInno, so you can specify most things there and they will get passed on, or you can provide detailed instructions directly to those functions like this:
 
-    # Copy installation scripts (JavaScript, icons, readme.txt, run.R, app.R)
+    # Copy installation scripts (JavaScript, icons, infobefore.txt, package_manager.R, app.R)
     copy_installation(app_dir = "my/app/path")
 
     # If your users need R installed:
-    get_R_exe(app_dir = "my/app/path", R_version = 2.2.1)
+    get_R(app_dir = "my/app/path", R_version = 2.2.1)
 
     # Create batch file
     create_bat(app_name = "My AppName", app_dir = "my/app/path")
@@ -96,7 +96,7 @@ If you would like to create a custom installer from within R, you can slowly bui
 
       # C-like directives
       directives(R_version   = 2.2.1, 
-                 include_R   = TRUE, 
+                 include_R   = TRUE,
                  app_version = "0.1.2",
                  publisher   = "Your Company", 
                  main_url    = "yourcompany.com") %>%

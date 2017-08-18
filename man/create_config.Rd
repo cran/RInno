@@ -4,15 +4,13 @@
 \alias{create_config}
 \title{Creates an app config file, "config.cfg"}
 \usage{
-create_config(app_name, R_version, app_dir, pkgs, remotes = "none",
+create_config(app_name, app_dir, pkgs, remotes = "none",
   repo = "http://cran.rstudio.com", error_log = "error.log",
   app_repo_url = "none", auth_user = "none", auth_pw = "none",
   user_browser = "chrome")
 }
 \arguments{
-\item{app_name}{The name of the app being installed. It will be displayed throughout the installer and uninstaller in window titles, wizard pages, and dialog boxes. See \href{http://www.jrsoftware.org/ishelp/topic_setup_appname.htm}{[Setup]:AppName} for details. For continuous installations, \code{app_name} is used to check for an R package of the same name, and update it. The Continuous Installation vignette has more details.}
-
-\item{R_version}{R version to use, defaults to: \code{paste0(R.version$major, '.', R.version$minor)}.}
+\item{app_name}{The name of the app being installed. It will be displayed throughout the installer's window titles, wizard pages, and dialog boxes. See \href{http://www.jrsoftware.org/ishelp/topic_setup_appname.htm}{[Setup]:AppName} for details. For continuous installations, \code{app_name} is used to check for an R package of the same name, and update it. The Continuous Installation vignette has more details.}
 
 \item{app_dir}{Shiny app's directory, defaults to \code{getwd()}.}
 
@@ -28,7 +26,7 @@ create_config(app_name, R_version, app_dir, pkgs, remotes = "none",
 
 \item{auth_user}{Authorized username. It is recommended to create a read-only account for each app.  Support for OAuth 2 and tokens is in the works.}
 
-\item{auth_pw}{Password to Bitbucket or Github.}
+\item{auth_pw}{Password to Bitbucket or GitHub.}
 
 \item{user_browser}{Character for the default browser. Options include "chrome", "firefox", and "ie."}
 }

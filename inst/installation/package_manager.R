@@ -18,7 +18,7 @@ if (!dir.exists(applibpath)) {
   for (i in seq_along(init_pkgs)) {
     setWinProgressBar(pb, value = i / (length(init_pkgs) + 1),
       label = sprintf("Loading package - %s", init_pkgs[i]))
-    install.packages(init_pkgs[i], applibpath)
+    install.packages(init_pkgs[i], applibpath, "http://cran.rstudio.com")
   }
   close(pb)
 }
@@ -73,8 +73,6 @@ appexit_msg <- tryCatch({
   setWinProgressBar(pb, 1.00, label = "Starting application")
   close(pb)
 
-  # App is launched in the system default browser (if FF or Chrome, should work
-  # fine, IE needs to be >= 10)
   source(file.path(appwd, "utils/app.R"))
 
   "application terminated normally"

@@ -1,60 +1,67 @@
 # app launching code
 config <- jsonlite::fromJSON("utils/config.cfg")
+reg_paths <- jsonlite::fromJSON("utils/regpaths.json")
 
+# This function is used to apply the web browser configuration and registry
+# information on app start up. If a user does not have the user browser,
+# their defult browser will be used.
 find_browser <- function(
   app_name = config$appname,
-  user_browser = config$user_browser) {
+  user_browser = config$user_browser,
+  chrome = reg_paths$chrome,
+  ff = reg_paths$ff,
+  ie = reg_paths$ie) {
 
-  progs  <- c(list.dirs("C:/Program Files", T, F),
-           list.dirs("C:/Program Files (x86)", T, F))
+  if (user_browser == "chrome") {
+    if (chrome != "none") {
+      chrome <- gsub("\\\\", "/", file.path(chrome, "chrome.exe", fsep = "\\"))
+      options(browser = chrome)
+    }
 
-  chrome <- file.path(progs[grep("Google", progs)],
-                      "Chrome/Application/Chrome.exe")
+  } else if (user_browser == "firefox") {
+    if (ff != "none") {
+      ff <- gsub("\\\\", "/", file.path(ff, "firefox.exe", fsep = "\\"))
+      options(browser = ff)
+    }
 
-  ff     <- file.path(progs[grep("Mozilla Firefox", progs)],
-                      "firefox.exe")
-
-  ie     <- file.path(progs[grep("Internet Explorer", progs)][1],
-                      "iexplore.exe")
-
-  if (file.exists(chrome) & user_browser == "chrome") {
-    # First choice
-    # Set the default browser option for shiny apps to chrome
-    options(browser = chrome)
-
-  } else if (file.exists(ff) & user_browser == "firefox") {
-    # Second
-    options(browser = ff)
-
-  } else if (file.exists(ie) & user_browser == "ie") {
-    # Not ideal
-    options(browser = ie)
-
-  } else if (file.exists(config$browser)) {
-    # Set the default browser option for shiny apps to manual_browser, so user
-    # doesn't get prompted again.
-    options(browser = config$browser)
-
-  } else {
-    # Ask the user to find their browser
-    manual_browser <- choose.files(
-      default = Sys.getenv("ProgramW6432"),
-      caption = sprintf("%s cannot find your browser. Please select its .exe file.", app_name))
-
-    # Store the result
-    config$browser <- manual_browser
-    jsonlite::write_json(config, "utils/config.cfg")
-
-    # Set the default browser option for shiny apps
-    options(browser = manual_browser)
+  } else if (user_browser == "ie") {
+    if (ie != "none") {
+      ie <- gsub("\\\\", "/", ie)
+      options(browser = ie)
+    }
   }
 }
 
 find_browser()
 
+# If a repo has been provided, use the app in your package
 if (config$app_repo[[1]] != "none") {
-  shiny::runApp(sprintf("./library/%s/app", config$appname), launch.browser = T)
+  app_path <- file.path(system.file(package = config$appname), "app")
+
+  # flexdashboard
+  if (config$flex_file != "none") {
+    if (Sys.getenv("RSTUDIO_PANDOC") == "") {
+      Sys.setenv(RSTUDIO_PANDOC = gsub("\\\\", "/", reg_paths$pandoc))
+    }
+    rmarkdown::run(file.path(app_path, config$flex_file),
+                   shiny_args = list(host = '0.0.0.0', launch.browser = T))
+
+  # Shiny
+  } else {
+    shiny::runApp(app_path, launch.browser = T)
+  }
 
 } else {
-  shiny::runApp("./", launch.browser = T)
+  # flexdashboard
+  if (config$flex_file != "none") {
+    if (Sys.getenv("RSTUDIO_PANDOC") == "") {
+      Sys.setenv(RSTUDIO_PANDOC = gsub("\\\\", "/", reg_paths$pandoc))
+    }
+    rmarkdown::run(paste0("./", config$flex_file),
+                   shiny_args = list(host = '0.0.0.0', launch.browser = T))
+
+  # Shiny
+  } else {
+    shiny::runApp("./", launch.browser = T)
+  }
 }

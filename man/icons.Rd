@@ -8,7 +8,7 @@ icons(iss, app_desc = "", app_icon = "default.ico", prog_menu_icon = TRUE,
   desktop_icon = TRUE)
 }
 \arguments{
-\item{iss}{Character vector which cummulatively becomes an Inno Setup Script (ISS).}
+\item{iss}{Character vector which cumulatively becomes an Inno Setup Script (ISS).}
 
 \item{app_desc}{Description of Shiny app, appears on mouse-over of icons.}
 
@@ -33,7 +33,7 @@ start_iss('myapp') \%>\%
 
 }
 \seealso{
-\code{\link{get_R}}, \code{\link{copy_installation}}, \code{\link{create_config}}, \code{\link{create_bat}}, \code{\link{create_pkgs}}, \code{\link{directives}}, \code{\link{setup}}, \code{\link{languages}}, \code{\link{tasks}}, \code{\link{files}}, \code{\link{icons}}, \code{\link{run}}, and \code{\link{code}}.
+\code{\link{get_R}}, \code{\link{copy_installation}}, \code{\link{create_config}}, \code{\link{create_bat}}, \code{\link{directives}}, \code{\link{setup}}, \code{\link{languages}}, \code{\link{tasks}}, \code{\link{files}}, \code{\link{icons}}, \code{\link{run}}, and \code{\link{code}}.
 }
 \author{
 Jonathan M. Hill
