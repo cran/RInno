@@ -1,5 +1,6 @@
 get_remote_version <- function(
-  app_repo = "none", host = "none", auth_user = "none", auth_pw  = "none") {
+  app_repo = "none", host = "none",
+  auth_user = "none", auth_pw  = "none", auth_token = "none") {
 
   # Fail early
   if (app_repo == "none") return("none")
@@ -19,7 +20,7 @@ get_remote_version <- function(
   }
 
   # Private Repos
-  if (auth_pw != "none") {
+  if (auth_pw != "none" | auth_token != "none") {
     if (host == "bitbucket") {
       base_url <-
         sprintf("https://api.bitbucket.org/2.0/repositories/%s/versions",
@@ -34,7 +35,7 @@ get_remote_version <- function(
       base_url <-
         sprintf("https://api.github.com/repos/%s/releases", app_repo)
       response <- warn_user(
-        httr::GET(base_url, httr::authenticate(auth_user, auth_pw)))
+        httr::GET(base_url, httr::authenticate(auth_token, "x-oauth-basic", "basic")))
       parsed_response <- httr::content(response, "parsed", encoding = "utf-8")
       app_version <- parsed_response[[1]]$tag_name
       return(app_version)
@@ -62,10 +63,11 @@ get_remote_version <- function(
 }
 
 api_response <- get_remote_version(
-  app_repo  = config$app_repo[[1]],
-  host      = config$host[[1]],
-  auth_user = config$auth_user[[1]],
-  auth_pw   = config$auth_pw[[1]])
+  app_repo   = config$app_repo[[1]],
+  host       = config$host[[1]],
+  auth_user  = config$auth_user[[1]],
+  auth_pw    = config$auth_pw[[1]],
+  auth_token = config$auth_token[[1]])
 
 # If information about an app repo has been supplied,
 if (api_response != "none") {
@@ -77,18 +79,17 @@ if (api_response != "none") {
                       label = sprintf("Installing %s", config$appname[[1]]))
 
     if (config$host == "bitbucket") {
-      if (config$auth_user == "none") {
+      if (config$auth_pw == "none") {
         devtools::install_bitbucket(config$app_repo)
       } else {
         devtools::install_bitbucket(config$app_repo,
           auth_user = config$auth_user, password = config$auth_pw)
       }
     } else if (config$host == "github") {
-      if (config$auth_user == "none") {
+      if (config$auth_token == "none") {
         devtools::install_github(config$app_repo)
       } else {
-        devtools::install_github(config$app_repo,
-          auth_user = config$auth_user, password = config$auth_pw)
+        devtools::install_github(config$app_repo, auth_token = config$auth_token)
       }
     }
   } else {
@@ -99,18 +100,17 @@ if (api_response != "none") {
                                         config$appname[[1]], api_response))
 
       if (config$host == "bitbucket") {
-        if (config$auth_user == "none") {
+        if (config$auth_pw == "none") {
           devtools::install_bitbucket(config$app_repo)
         } else {
           devtools::install_bitbucket(config$app_repo,
             auth_user = config$auth_user, password = config$auth_pw)
         }
       } else if (config$host == "github") {
-        if (config$auth_user == "none") {
+        if (config$auth_token == "none") {
           devtools::install_github(config$app_repo)
         } else {
-          devtools::install_github(config$app_repo,
-            auth_user = config$auth_user, password = config$auth_pw)
+          devtools::install_github(config$app_repo, auth_token = config$auth_token)
         }
       }
     }

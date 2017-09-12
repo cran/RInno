@@ -2,7 +2,7 @@ Package: RInno
 Type: Package
 OS_type: windows
 Title: An Installation Framework for Shiny Apps
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person("Jon", "Hill", role = c("aut", "cre", "cph"), email = "jon.mark.hill@gmail.com"),
     person("W. Lee", "Pang", role = c("aut", "cph"), comment = "DesktopDeployR project at https://github.com/wleepang/DesktopDeployR"),
@@ -23,10 +23,10 @@ Suggests: knitr, magrittr, stringi, covr, testthat
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2017-08-18 15:46:19 UTC; jhill
+Packaged: 2017-09-12 02:51:17 UTC; jhill
 Author: Jon Hill [aut, cre, cph],
   W. Lee Pang [aut, cph] (DesktopDeployR project at
     https://github.com/wleepang/DesktopDeployR),
   Hanjo Odendaal [ctb]
 Repository: CRAN
-Date/Publication: 2017-08-18 15:54:35 UTC
+Date/Publication: 2017-09-12 04:05:01 UTC
