@@ -9,11 +9,10 @@
 #'
 #' \code{custom_vars} and \code{custom_values} utilize the #define directive.
 #'
-#' @param main_url String. Defaults to " ".
-#' @param custom_vars String vector. Defaults to " ", and must be the same length as \code{custom_values}.
-#' @param custom_values String vector of values for \code{custom_vars}. Defaults to " ", and must be the same length as \code{custom_vars}.
+#' @param main_url String. Defaults to "".
+#' @param custom_vars String vector. Defaults to "", and must be the same length as \code{custom_values}.
+#' @param custom_values String vector of values for \code{custom_vars}. Defaults to "", and must be the same length as \code{custom_vars}.
 #'
-
 #' @inheritParams create_app
 #' @inherit setup return seealso params
 #'
@@ -32,7 +31,7 @@
 directives <- function(app_name, include_R = FALSE,
   R_version = paste0(R.version$major, ".", R.version$minor),
   include_Pandoc = FALSE, Pandoc_version = rmarkdown::pandoc_version(),
-  app_version = "0.0.0", publisher = "", main_url = "",
+  include_Chrome = FALSE, app_version = "0.0.0", publisher = "", main_url = "",
   custom_vars = "", custom_values = "") {
 
   # Reset defaults if empty
@@ -41,25 +40,20 @@ directives <- function(app_name, include_R = FALSE,
   }
 
   if (!custom_vars == "") {
-    custom_ispp <- sprintf('#define %s "%s"', custom_vars, custom_values)
+    custom_ispp <- glue::glue('#define {custom_vars} "{custom_values}"')
   } else {
     custom_ispp <- ""
   }
 
-  opts <- c(
-    # Required
-    sprintf('#define MyAppName "%s"', app_name),
-    sprintf('#define MyAppVersion "%s"', app_version),
-    sprintf('#define MyAppExeName "%s"', paste0(app_name, '.bat')),
-    sprintf('#define RVersion "%s"', R_version),
-    sprintf('#define IncludeR %s', tolower(include_R)),
-    sprintf('#define PandocVersion "%s"', Pandoc_version),
-    sprintf('#define IncludePandoc %s', tolower(include_Pandoc)),
-
-    # Optional
-    sprintf('#define MyAppPublisher "%s"', publisher),
-    sprintf('#define MyAppURL "%s"', main_url),
-    custom_ispp)
-
-  opts
+  glue::glue('#define MyAppName "{app_name}"
+    #define MyAppVersion "{app_version}"
+    #define MyAppExeName "{paste0(app_name, ".bat")}"
+    #define RVersion "{R_version}"
+    #define IncludeR {tolower(include_R)}
+    #define PandocVersion "{Pandoc_version}"
+    #define IncludePandoc {tolower(include_Pandoc)}
+    #define IncludeChrome {tolower(include_Chrome)}
+    #define MyAppPublisher "{publisher}"
+    #define MyAppURL "{main_url}"
+    {custom_ispp}')
 }

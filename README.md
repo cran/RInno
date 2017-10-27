@@ -36,9 +36,23 @@ Once you have developed a shiny app, you can build an installer with `create_app
     create_app(app_name = "Your appname", app_dir = "app")
     compile_iss()
 
-`create_app` creates an installation framework in your app's directory, `app_dir`. Feel free to customize it before you call `compile_iss`. For example, you can replace the default/setup icon at [Flaticon.com](http://www.flaticon.com/), or you can customize the pre-install message, *infobefore.txt*. Just remember, the default values for those files have not changed. The Inno Setup Script (ISS), *app\_name.iss*, will look for *default.ico* and use it as your app's icon. You must replace *default.ico*, or rename *default.ico* in the ISS to use a different one.
+`create_app` creates an installation framework in your app's directory, `app_dir`. You can perform minor customizations before you call `compile_iss`. For example, you can replace the default/setup icon at [Flaticon.com](http://www.flaticon.com/), or you can customize the pre-/post- install messages, *infobefore.txt* and *infoafter.txt*. Just remember, the default values (i.e. `create_app(info_after = "infobefore.txt")`) for those files have not changed. The Inno Setup Script (ISS), *app\_name.iss*, will look for *default.ico* and try to use it until you update the script or call `create_app` with the new icon's file name (i.e. `create_app(app_icon = "new.ico")`).
 
-For custom installations, see below.
+Chrome is the default browser used by RInno because of its app mode feature. I've also found that IE/Edge often prevents icons and third party JavaScript libraries from loading because of various IT policies. The default `user_browser` setting will open Chrome in app mode, which looks more like a stand-alone app than when it opens in another tab of your default browser. Regardless, RInno's startup sequence will fall back on the user's default browser if Chrome is not installed.
+
+ui.R Requirements
+-----------------
+
+In order to replace Chrome's logo with your app's icon, add something like this to your ui.R file:
+
+    fluidPage(
+      tags$head(
+        tags$link(
+          rel = "icon", 
+          type = "image/x-icon", 
+          href = "http://localhost:1984/default.ico")
+      )
+    )
 
 server.R Requirements
 ---------------------
@@ -60,8 +74,8 @@ In order to close the app when your user's session completes:
 
 If you forget to do this, users will complain that their icons are broken and rightly blame you for it (an R session will be running in the background hosting the app, but they will need to press ctrl + alt + delete and use their task manager to close it). **Not cool**.
 
-Custom Installer
-----------------
+Custom Installations
+--------------------
 
 If you would like to create a custom installer from within R, you can slowly build up to it with `create_app`, like this:
 

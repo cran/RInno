@@ -6,8 +6,9 @@
 \usage{
 directives(app_name, include_R = FALSE, R_version = paste0(R.version$major,
   ".", R.version$minor), include_Pandoc = FALSE,
-  Pandoc_version = rmarkdown::pandoc_version(), app_version = "0.0.0",
-  publisher = "", main_url = "", custom_vars = "", custom_values = "")
+  Pandoc_version = rmarkdown::pandoc_version(), include_Chrome = FALSE,
+  app_version = "0.0.0", publisher = "", main_url = "",
+  custom_vars = "", custom_values = "")
 }
 \arguments{
 \item{app_name}{The name of the app being installed. It will be displayed throughout the installer's window titles, wizard pages, and dialog boxes. See \href{http://www.jrsoftware.org/ishelp/topic_setup_appname.htm}{[Setup]:AppName} for details. For continuous installations, \code{app_name} is used to check for an R package of the same name, and update it. The Continuous Installation vignette has more details.}
@@ -20,15 +21,17 @@ directives(app_name, include_R = FALSE, R_version = paste0(R.version$major,
 
 \item{Pandoc_version}{Pandoc version to use, defaults to: \code{\link[rmarkdown]{pandoc_version}}.}
 
+\item{include_Chrome}{To include Chrome in the installer, \code{include_Chrome = TRUE}. If you would like to use Chrome's app mode, this option includes a copy of Chrome for users that do not have it installed yet.}
+
 \item{app_version}{Version number of the app being installed, defaults to \code{'0.0.0'}. It is displayed in the Version field of the app's \emph{Add/Remove Programs} entry. See \href{http://www.jrsoftware.org/ishelp/index.php?topic=setup_appversion}{[Setup]:AppVersion} for details.}
 
 \item{publisher}{String displayed on the "Support" dialogue of the \emph{Add/Remove Programs} Control Panel applet, defaults to " ". See \href{http://www.jrsoftware.org/ishelp/index.php?topic=setup_apppublisher}{[Setup]:AppPublisher} for details.}
 
-\item{main_url}{String. Defaults to " ".}
+\item{main_url}{String. Defaults to "".}
 
-\item{custom_vars}{String vector. Defaults to " ", and must be the same length as \code{custom_values}.}
+\item{custom_vars}{String vector. Defaults to "", and must be the same length as \code{custom_values}.}
 
-\item{custom_values}{String vector of values for \code{custom_vars}. Defaults to " ", and must be the same length as \code{custom_vars}.}
+\item{custom_values}{String vector of values for \code{custom_vars}. Defaults to "", and must be the same length as \code{custom_vars}.}
 }
 \value{
 Chainable character vector, which can be used as the \code{text} argument of \code{\link{writeLines}} to generate an ISS.
