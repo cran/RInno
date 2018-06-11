@@ -3,13 +3,14 @@
 #' Standardizes (named or not) character vectors of package dependencies and formats it for config.cfg.
 #'
 #' @param pkgs Processes \code{pkgs}, and \code{locals}, arguments of \code{\link{create_config}} and \code{\link{create_app}}.
+#' @param check_version Boolean. If true, check to make sure the package version is not ahead of CRAN.
 #'
 #' @return Package dependency list with version numbers and inequalities. Defaults to \code{paste0(">=", packageVersion(pkg))}.
 #'
 #' @author William Bradley and Jonathan Hill
 #' @export
 
-standardize_pkgs <- function(pkgs) {
+standardize_pkgs <- function(pkgs, check_version = FALSE) {
 
   if (pkgs[1] == "none") return("none")
 
@@ -55,7 +56,8 @@ standardize_pkgs <- function(pkgs) {
   pkgs <- lapply(pkg_list, as.character)
 
   # Make sure the results are valid
-  df <- data.frame(utils::installed.packages())
+  installed_pkgs <- data.frame(utils::installed.packages(), row.names = NULL)
+
   check_pkgs <- function(pkg, pkg_name) {
     breakpoint <- attr(regexpr("[<>=]+", pkg), "match.length")
     inequality <- substr(pkg, 1, breakpoint)
@@ -67,12 +69,20 @@ standardize_pkgs <- function(pkgs) {
     if (class(try(numeric_version(required_version), silent = TRUE)) == "try-error") {
       stop(glue::glue("{required_version} is not a valid `numeric_version` for {pkg_name} "), call. = F)
     }
-    if (!pkg_name %in% df$Package) stop(glue::glue("{pkg_name} is not installed. Make sure it is in `installed.pacakges()` and try again."), call. = F)
+    if (!pkg_name %in% installed_pkgs$Package) {
+      stop(glue::glue("{pkg_name} is not installed. Make sure it is in `installed.pacakges()` and try again."), call. = F)
+    }
+    if (check_version) {
+      if (numeric_version(required_version) > cran_version(pkg_name)) {
+        stop(glue::glue("{pkg_name} v{required_version} is ahead of CRAN - v{cran_version(pkg_name)}. Please add it to `remotes` to use {pkg_name}'s development version from Github/Bitbucket or decrease its version to one published on CRAN."), call. = FALSE)
+      }
+    }
   }
   mapply(check_pkgs, pkgs, names(pkgs))
 
   return(pkgs)
 }
+
 
 #' Sanitize R's version
 #'
@@ -111,4 +121,69 @@ sanitize_R_version <- function(R_version, clean = FALSE){
   }
   if (clean) R_version <- gsub("[<>=[:space:]]", "", R_version)
   return(R_version)
+}
+
+
+#' Check CRAN for package version
+#'
+#' @param pkg_name String. Package name as published on CRAN.
+#' @param cran_url String. First part of the cannonical form of a package website on CRAN.
+#'
+#' @return The package's version as a \code{numeric_version}.
+#'
+#' @examples
+#' cran_version("shiny")
+#'
+#' @export
+cran_version = function(pkg_name, cran_url = "http://cran.r-project.org/package=") {
+
+  # Create URL
+  cran_pkg_loc = paste0(cran_url, pkg_name)
+
+  # Establish connection
+  suppressWarnings(conn <- try(url(cran_pkg_loc), silent = TRUE))
+
+  # If connection, read in webpage
+  if (all(class(conn) != "try-error") ) {
+    suppressWarnings(cran_pkg_page <- try(readLines(conn), silent = TRUE))
+    close(conn)
+  } else {
+    return(NULL)
+  }
+
+  # Use regex to find version info
+  version_line = cran_pkg_page[grep("Version:", cran_pkg_page) + 1]
+  version_line = gsub("<(td|\\/td)>","",version_line)
+  numeric_version(version_line)
+
+}
+
+
+#' Add package to named vector
+#'
+#' Adds (named or not) package dependencies to a named vector of packages.
+#'
+#' @param pkgs Processes \code{pkgs}, and \code{locals}, arguments of \code{\link{create_config}} and \code{\link{create_app}}.
+#' @param pkg String. Name of package to add
+#'
+#' @return Package dependency string vector for \code{\link{standardize_pkgs}}.
+#'
+#' @examples
+#' pkgs <- c("shiny", rmarkdown = "1.8", "Rook")
+#' add_pkgs(pkgs, c("rmarkdown", "dplyr"))
+#'
+#' @author Jonathan Hill
+#' @export
+add_pkgs <- function(pkgs, pkg) {
+
+  pkg_strings <- pkg %in% pkgs
+  pkg_names <- pkg %in% names(pkgs)
+
+  needed_pkgs <- pkg[!(pkg_names | pkg_strings)]
+
+  if (length(needed_pkgs) > 0) {
+    pkgs <- c(pkgs, needed_pkgs)
+  }
+
+  return(pkgs)
 }

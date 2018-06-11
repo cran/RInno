@@ -37,8 +37,8 @@ create_config <- function(app_name,
   if (any(lapply(locals, class) != "character")) stop("`locals` must be a character vector.", call. = FALSE)
 
   # Check local_path for locals
-  if (locals != "none") {
-    locals_check <- unlist(lapply(locals, function(x) list.files(file.path(app_dir, local_path), pattern = x)))
+  if (locals[[1]] != "none") {
+    locals_check <- unique(unlist(lapply(names(standardize_pkgs(locals)), function(x) list.files(file.path(app_dir, local_path), pattern = x))))
 
     if (length(locals) > length(locals_check)) {
       locals_message <- glue::glue("These packages were not found in {file.path(app_dir, local_path)}:")
@@ -66,10 +66,8 @@ create_config <- function(app_name,
     # Set app_repo
     app_repo <- strsplit(app_repo_url, "org/|com/")[[1]][2]
 
-    if (!"httr" %in% pkgs) {
-      # Add httr for API calls
-      pkgs <- c(pkgs, "httr")
-    }
+    # Make sure httr is included
+    pkgs <- add_pkgs(pkgs, "httr")
 
     # Set host
     if (grepl("bitbucket.org", app_repo_url)) host <- "bitbucket"
@@ -87,7 +85,8 @@ create_config <- function(app_name,
     flex_file <- flexdashboard_check(check_files)
 
     if (length(flex_file) > 0) {
-      pkgs <- c(pkgs, c("flexdashboard", "rmarkdown"))
+      # Make sure flexdashboard and rmarkdown are included in the dependency list
+      pkgs <- add_pkgs(pkgs, c("flexdashboard", "rmarkdown"))
       cat("This flexdashboard will be used:\n - ", flex_file, "\n")
     } else {
       flex_file <- "none"
@@ -99,7 +98,7 @@ create_config <- function(app_name,
   jsonlite::write_json(
     list(
       appname = app_name,
-      pkgs = list(pkgs = standardize_pkgs(pkgs), cran = repo),
+      pkgs = list(pkgs = standardize_pkgs(pkgs, check_version = TRUE), cran = repo),
       remotes = remotes,
       locals = list(pkgs = standardize_pkgs(locals), local = local_path),
       logging = error_log,

@@ -21,7 +21,11 @@
 #' @param R_version R version to use. Supports inequalities similar to \code{pkgs}. Defaults to: \code{paste0(">=", R.version$major, '.', R.version$minor)}.
 #' @param include_Pandoc To include Pandoc in the installer, \code{include_Pandoc = TRUE}. If installing a flexdashboard app, some users may need a copy of Pandoc. The installer will check the user's registry for the version of Pandoc specified in \code{Pandoc_version} and only install it if necessary.
 #' @param Pandoc_version Pandoc version to use, defaults to: \code{\link[rmarkdown]{pandoc_version}}.
-#' @param include_Chrome To include Chrome in the installer, \code{include_Chrome = TRUE}. If you would like to use Chrome's app mode, this option includes a copy of Chrome for users that do not have it installed yet.
+#' @param include_Chrome To include Chrome in the installer, \code{include_Chrome = TRUE}. If you would like to use Chrome's app mode, it is no longer supported by Google :(.
+#' @param include_Rtools To include Rtools in the installer, \code{include_Rtools = TRUE}. For some packages to build properly, you may need to include Rtools.
+#' @param Rtools_version Rtools version to include. For more information, see \href{https://cran.r-project.org/bin/windows/Rtools/}{Building R for Windows}.
+#' @param overwrite Logical. Should existing installation files be overwritten? See \code{\link{copy_installation}} for details.
+#' ?
 #' @param ... Arguments passed on to \code{setup_section}, \code{files_section}, \code{directives_section}, \code{icons_section}, \code{languages_section}, \code{code_section}, \code{tasks_section}, and \code{run_section}.
 #' @inheritParams create_config
 #' @examples
@@ -58,8 +62,11 @@ create_app <- function(app_name,
   include_R    = FALSE,
   include_Pandoc = FALSE,
   include_Chrome = FALSE,
+  include_Rtools = FALSE,
   R_version = paste0(">=", R.version$major, ".", R.version$minor),
   Pandoc_version = rmarkdown::pandoc_version(),
+  Rtools_version = "3.5",
+  overwrite = TRUE,
   ...) {
 
   # To capture arguments for other function calls
@@ -89,12 +96,13 @@ create_app <- function(app_name,
   R_version <- sanitize_R_version(R_version)
 
   # Copy installation scripts
-  copy_installation(app_dir)
+  copy_installation(app_dir, overwrite)
 
   # Include separate installers for R, Pandoc, and Chrome if necessary
   if (include_R) get_R(app_dir, R_version)
   if (include_Pandoc) get_Pandoc(app_dir, Pandoc_version)
   if (include_Chrome) get_Chrome(app_dir)
+  if (include_Rtools) get_Rtools(app_dir, Rtools_version, R_version)
 
   # Create batch file
   create_bat(app_name, app_dir)
@@ -111,7 +119,8 @@ create_app <- function(app_name,
 
   # C-like directives
   iss <- directives_section(iss, include_R, R_version, include_Pandoc, Pandoc_version,
-    include_Chrome, app_version = dots$app_version, publisher = dots$publisher,
+    include_Chrome, include_Rtools, Rtools_version,
+    app_version = dots$app_version, publisher = dots$publisher,
     main_url = dots$main_url)
 
   # Setup Section
@@ -133,7 +142,7 @@ create_app <- function(app_name,
     prog_menu_icon = dots$prog_menu_icon, desktop_icon = dots$desktop_icon)
 
   # Files Section
-  iss <- files_section(iss, app_dir, file_list = dots$file_list)
+  iss <- files_section(iss, app_name, app_dir, file_list = dots$file_list)
 
   # Execution & Pascal code to check registry during installation
   iss <- run_section(iss, dots$R_flags); iss <- code_section(iss, R_version)
