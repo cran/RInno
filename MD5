@@ -1,4 +1,4 @@
-ccae92911eb300bfee928333cc9ff52b *DESCRIPTION
+d5e2f79418313be010daa3b12973a13e *DESCRIPTION
 465da32c9061406a0b34b5ee0178c398 *LICENSE
 c7af522cd114d1885991c28bca322913 *NAMESPACE
 06aa52ce69dbbdb6b35bf64f3ca8f5f3 *NEWS.md
@@ -62,10 +62,10 @@ c37512e9b2e3cdbf6570d046763b1993 *inst/app/www/Flatly.css
 1dca1af331bd7ceeaed0eba6aa0df372 *inst/app/www/passwdInputBinding.js
 9675ae177b1d01490e1b8b65f8d05f25 *inst/app/www/pwstyle.css
 3b36e8d8c87f8546a1165fc7ab145a2e *inst/doc/Introduction.Rmd
-82f69e99bf45788aeace0502606f0f9b *inst/doc/Introduction.html
+1c508f608ac4c52e904fef9cc0cef01c *inst/doc/Introduction.html
 a71144984709b001d59299ad0e8b7f8c *inst/doc/cont-installation.R
 9200078841a8f1f3ee147c8f4f43a403 *inst/doc/cont-installation.Rmd
-5fc15d72e4140b0c25e82c48fa502b1e *inst/doc/cont-installation.html
+6d9bce281f77a97d62594027acf01faa *inst/doc/cont-installation.html
 de4bf9fd6d6bbb8e7c1935284cdfe601 *inst/flexdashboard_example/example.Rmd
 366800a8c81663c2d428c0da95479e20 *inst/installation/JSON.minify.js
 19a761a7ef9dc48b8e88b2e10ffb7d54 *inst/installation/code.iss
