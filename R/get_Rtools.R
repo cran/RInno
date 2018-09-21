@@ -68,8 +68,8 @@ get_Rtools <- function(app_dir, Rtools_version, R_version) {
       version_max = "3.4.99"
     ),
     "3.5" = list(
-      version_min = "3.4.0",
-      version_max = "3.5.99"
+      version_min = "3.3.0",
+      version_max = "99.99.99"
     )
   )
 
@@ -94,7 +94,7 @@ get_Rtools <- function(app_dir, Rtools_version, R_version) {
   download_url <- paste0(Rtools_url, Rtools_file)
 
   if (file.exists(filename)) {
-    cat("Using the copy of Rtools already included:\n", filename)
+    cat("Using the copy of Rtools already included:\n", filename, "\n")
   } else {
     cat(glue::glue("Downloading Rtools {Rtools_version} ...\n"))
 
@@ -105,7 +105,7 @@ get_Rtools <- function(app_dir, Rtools_version, R_version) {
 
                               This is likely to have happened because there was a change in the URL.
 
-                              This might have already been fixed in the latest version of RInno. Install it with devtools::install_github('ficonsulting/RInno').
+                              This might have already been fixed in the latest version of RInno. Install it with remotes::install_github('ficonsulting/RInno').
 
                               If this doesn't help please submit an issue: {packageDescription('RInno', fields = 'BugReports')}
 

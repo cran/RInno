@@ -10,7 +10,7 @@
 #' @author Jonathan M. Hill
 #' @export
 
-files_section <- function(iss, app_name, app_dir, file_list = character()) {
+files_section <- function(iss, app_name, app_dir, user_browser, file_list = character()) {
 
   all_files <- list.files(app_dir, recursive = T)
 
@@ -19,6 +19,12 @@ files_section <- function(iss, app_name, app_dir, file_list = character()) {
     all_files <- all_files[!grepl("iss$|info.*txt$|exe$", all_files)]
   } else {
     all_files <- c(file_list, all_files[!grepl("iss$|info.*txt$|exe$", all_files)])
+  }
+  if (user_browser == "electron") {
+    all_files <- c(
+      all_files,
+      file.path("nativefier-app", list.files(file.path(app_dir, "nativefier-app"), pattern = ".exe", recursive = TRUE))
+    )
   }
 
   # Get file paths with dirname(), if no path (file in app directory/not contained in a subdirectory) dirname() returns "."
@@ -42,7 +48,7 @@ glue::glue('
 {iss}
 
 [Files]
-Source: "LICENSE"; Flags: dontcopy
+Source: "LICENSE"; Flags: dontcopy noencryption
 Source: "{{#MyAppExeName}}"; DestDir: "{{app}}"; Flags: ignoreversion
 #if IncludeR
     Source: "R-{{#RVersion}}-win.exe"; DestDir: "{{tmp}}"; Check: RNeeded
@@ -56,7 +62,7 @@ Source: "{{#MyAppExeName}}"; DestDir: "{{app}}"; Flags: ignoreversion
 #if IncludeRtools
     Source: "Rtools{{#RtoolsVersion}}.exe"; DestDir: "{{tmp}}";
 #endif
-{glue::collapse(blank_dir_files, "\n")}
-{glue::collapse(dir_files, "\n")}
+{glue::glue_collapse(blank_dir_files, "\n")}
+{glue::glue_collapse(dir_files, "\n")}
 ')
 }

@@ -1,16 +1,8 @@
-context("test-standardize_pkgs.R")
+context("standardize_pkgs")
 
 test_that("Package dependencies are installed", {
   expect_error(standardize_pkgs("test"))
   expect_error(standardize_pkgs(c(test = ">1.0")))
-})
-
-test_that("Logical operators are valid", {
-  expect_error(standardize_pkgs(c(shiny = "=<1.0.5")))
-})
-
-test_that("Numeric version numbers are valid", {
-  expect_error(standardize_pkgs(c(shiny = "haha you lose")))
 })
 
 test_that("Packages are standardized consistently", {

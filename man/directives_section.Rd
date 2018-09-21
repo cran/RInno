@@ -7,20 +7,20 @@
 directives_section(app_name, include_R = FALSE,
   R_version = paste0(R.version$major, ".", R.version$minor),
   include_Pandoc = FALSE, Pandoc_version = rmarkdown::pandoc_version(),
-  include_Chrome = FALSE, include_Rtools = FALSE, Rtools_version = "3.5",
-  app_version = "0.0.0", publisher = "", main_url = "",
-  custom_vars = "", custom_values = "")
+  include_Chrome = FALSE, include_Rtools = FALSE,
+  Rtools_version = "3.5", app_version = "0.0.0", publisher = "",
+  main_url = "", custom_vars = "", custom_values = "")
 }
 \arguments{
 \item{app_name}{The name of the app. It will be displayed throughout the installer's window titles, wizard pages, and dialog boxes. See \href{http://www.jrsoftware.org/ishelp/topic_setup_appname.htm}{[Setup]:AppName} for details. For continuous installations, \code{app_name} is used to check for an R package of the same name, and update it. The Continuous Installation vignette has more details.}
 
 \item{include_R}{To include R in the installer, \code{include_R = TRUE}. The version of R specified by \code{R_version} is used. The installer will check each user's registry and only install R if necessary.}
 
-\item{R_version}{R version to use. Supports inequalities similar to \code{pkgs}. Defaults to: \code{paste0(">=", R.version$major, '.', R.version$minor)}.}
+\item{R_version}{R version to use. Supports inequalities. Defaults to: \code{paste0(">=", R.version$major, '.', R.version$minor)}.}
 
 \item{include_Pandoc}{To include Pandoc in the installer, \code{include_Pandoc = TRUE}. If installing a flexdashboard app, some users may need a copy of Pandoc. The installer will check the user's registry for the version of Pandoc specified in \code{Pandoc_version} and only install it if necessary.}
 
-\item{Pandoc_version}{Pandoc version to use, defaults to: \code{\link[rmarkdown]{pandoc_version}}.}
+\item{Pandoc_version}{Pandoc version to use, defaults to: \link[rmarkdown]{pandoc_available}.}
 
 \item{include_Chrome}{To include Chrome in the installer, \code{include_Chrome = TRUE}. If you would like to use Chrome's app mode, it is no longer supported by Google :(.}
 
